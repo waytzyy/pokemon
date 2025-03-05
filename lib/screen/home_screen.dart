@@ -75,34 +75,39 @@ class HomeScreen extends StatelessWidget {
                     }
                     return true;
                   },
-                  child: GridView.builder(
-                    padding: const EdgeInsets.all(16),
-                    gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
-                      crossAxisCount: 2,
-                      childAspectRatio: 1.4,
-                      crossAxisSpacing: 10,
-                      mainAxisSpacing: 10,
-                    ),
-                    itemCount: state.pokemonList.length,
-                    itemBuilder: (context, index) {
-                      final pokemon = state.pokemonList[index];
-                      return PokemonCard(
-                        key: ValueKey(pokemon.id),
-                        pokemon: pokemon,
-                        onTap: () {
-                          Navigator.push(
-                            context,
-                            PageRouteBuilder(
-                              transitionDuration: const Duration(milliseconds: 200),
-                              pageBuilder: (context, animation, secondaryAnimation) => 
-                                  DetailScreen(pokemon: pokemon),
-                              transitionsBuilder: (context, animation, secondaryAnimation, child) {
-                                return FadeTransition(
-                                  opacity: animation,
-                                  child: child,
-                                );
-                              },
-                            ),
+                  child: LayoutBuilder(
+                    builder: (context, constraints) {
+                      final isLandscape = constraints.maxWidth > constraints.maxHeight;
+                      return GridView.builder(
+                        padding: const EdgeInsets.all(16),
+                        gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
+                          crossAxisCount: isLandscape ? 4 : 2,
+                          childAspectRatio: isLandscape ? 1.6 : 1.4,
+                          crossAxisSpacing: 10,
+                          mainAxisSpacing: 10,
+                        ),
+                        itemCount: state.pokemonList.length,
+                        itemBuilder: (context, index) {
+                          final pokemon = state.pokemonList[index];
+                          return PokemonCard(
+                            key: ValueKey(pokemon.id),
+                            pokemon: pokemon,
+                            onTap: () {
+                              Navigator.push(
+                                context,
+                                PageRouteBuilder(
+                                  transitionDuration: const Duration(milliseconds: 200),
+                                  pageBuilder: (context, animation, secondaryAnimation) => 
+                                      DetailScreen(pokemon: pokemon),
+                                  transitionsBuilder: (context, animation, secondaryAnimation, child) {
+                                    return FadeTransition(
+                                      opacity: animation,
+                                      child: child,
+                                    );
+                                  },
+                                ),
+                              );
+                            },
                           );
                         },
                       );

@@ -32,67 +32,226 @@ class _DetailScreenState extends State<DetailScreen> {
           ),
         ],
       ),
-      body: Stack(
-        children: [
-          Positioned(
-            top: 0,
-            left: 20,
-            child: Column(
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: [
-                Text(
-                  widget.pokemon.name.toLowerCase(),
+      body: OrientationBuilder(
+        builder: (context, orientation) {
+          return Stack(
+            children: [
+              if (orientation == Orientation.portrait) ...[
+                _buildPortraitLayout(context),
+              ] else ...[
+                _buildLandscapeLayout(context),
+              ],
+            ],
+          );
+        },
+      ),
+    );
+  }
+
+  Widget _buildPortraitLayout(BuildContext context) {
+    return Stack(
+      children: [
+        Positioned(
+          top: 0,
+          left: 20,
+          child: Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              Text(
+                widget.pokemon.name.toLowerCase(),
+                style: const TextStyle(
+                  color: Colors.white,
+                  fontSize: 32,
+                  fontWeight: FontWeight.w600,
+                ),
+              ),
+              Container(
+                padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 4),
+                decoration: BoxDecoration(
+                  color: Colors.white24,
+                  borderRadius: BorderRadius.circular(20),
+                ),
+                child: Text(
+                  widget.pokemon.types.first.toLowerCase(),
                   style: const TextStyle(
                     color: Colors.white,
-                    fontSize: 32,
-                    fontWeight: FontWeight.w600,
+                    fontSize: 14,
                   ),
                 ),
-                Container(
-                  padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 4),
-                  decoration: BoxDecoration(
-                    color: Colors.white24,
-                    borderRadius: BorderRadius.circular(20),
-                  ),
-                  child: Text(
-                    widget.pokemon.types.first.toLowerCase(),
-                    style: const TextStyle(
-                      color: Colors.white,
-                      fontSize: 14,
-                    ),
+              ),
+            ],
+          ),
+        ),
+        
+        Positioned(
+          top: 20,
+          right: 20,
+          child: Text(
+            "#${widget.pokemon.id.toString().padLeft(3, '0')}",
+            style: const TextStyle(
+              color: Colors.white,
+              fontSize: 16,
+              fontWeight: FontWeight.bold,
+            ),
+          ),
+        ),
+
+        Positioned(
+          left: 0,
+          right: 0,
+          bottom: 0,
+          height: MediaQuery.of(context).size.height * 0.55,
+          child: Container(
+            padding: const EdgeInsets.only(top: 30),
+            decoration: const BoxDecoration(
+              color: Colors.white,
+              borderRadius: BorderRadius.vertical(top: Radius.circular(30)),
+            ),
+            child: Column(
+              children: [
+                Row(
+                  mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                  children: [
+                    _buildTab('About'),
+                    _buildTab('Base Stats'),
+                    _buildTab('Evolution'),
+                    _buildTab('Moves'),
+                  ],
+                ),
+                Expanded(
+                  child: SingleChildScrollView(
+                    padding: const EdgeInsets.all(20),
+                    child: _buildSelectedContent(),
                   ),
                 ),
               ],
             ),
           ),
-          
-          Positioned(
-            top: 20,
-            right: 20,
-            child: Text(
-              "#${widget.pokemon.id.toString().padLeft(3, '0')}",
-              style: const TextStyle(
-                color: Colors.white,
-                fontSize: 16,
-                fontWeight: FontWeight.bold,
+        ),
+
+        Stack(
+          children: [
+            Positioned(
+              top: MediaQuery.of(context).size.height * 0.12,
+              left: -30,
+              child: Opacity(
+                opacity: 0.08,
+                child: Container(
+                  width: 150,
+                  height: 150,
+                  decoration: BoxDecoration(
+                    color: Colors.white,
+                    shape: BoxShape.circle,
+                  ),
+                ),
               ),
             ),
-          ),
 
-          Positioned(
-            left: 0,
-            right: 0,
-            bottom: 0,
-            height: MediaQuery.of(context).size.height * 0.55,
-            child: Container(
-              padding: const EdgeInsets.only(top: 30),
-              decoration: const BoxDecoration(
-                color: Colors.white,
-                borderRadius: BorderRadius.vertical(top: Radius.circular(30)),
-              ),
-              child: Column(
+            Positioned(
+              top: MediaQuery.of(context).size.height * 0.12,
+              right: -30,
+              child: Stack(
                 children: [
-                  Row(
+                  Opacity(
+                    opacity: 0.08,
+                    child: Container(
+                      width: 150,
+                      height: 150,
+                      decoration: const BoxDecoration(
+                        color: Colors.white,
+                        shape: BoxShape.circle,
+                      ),
+                      child: CustomPaint(
+                        painter: PokeBallPatternPainter(),
+                      ),
+                    ),
+                  ),
+                ],
+              ),
+            ),
+          ],
+        ),
+
+        Positioned(
+          top: MediaQuery.of(context).size.height * 0.12,
+          left: 0,
+          right: 0,
+          child: Hero(
+            tag: 'pokemon-${widget.pokemon.id}',
+            child: Image.network(
+              widget.pokemon.imageUrl,
+              height: 200,
+              fit: BoxFit.contain,
+            ),
+          ),
+        ),
+      ],
+    );
+  }
+
+  Widget _buildLandscapeLayout(BuildContext context) {
+    return Row(
+      children: [
+        Expanded(
+          flex: 4,
+          child: Stack(
+            children: [
+              Positioned(
+                top: 0,
+                left: 20,
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    Text(
+                      widget.pokemon.name.toLowerCase(),
+                      style: const TextStyle(
+                        color: Colors.white,
+                        fontSize: 32,
+                        fontWeight: FontWeight.w600,
+                      ),
+                    ),
+                    Container(
+                      padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 4),
+                      decoration: BoxDecoration(
+                        color: Colors.white24,
+                        borderRadius: BorderRadius.circular(20),
+                      ),
+                      child: Text(
+                        widget.pokemon.types.first.toLowerCase(),
+                        style: const TextStyle(
+                          color: Colors.white,
+                          fontSize: 14,
+                        ),
+                      ),
+                    ),
+                  ],
+                ),
+              ),
+              Center(
+                child: Hero(
+                  tag: 'pokemon-${widget.pokemon.id}',
+                  child: Image.network(
+                    widget.pokemon.imageUrl,
+                    height: 200,
+                    fit: BoxFit.contain,
+                  ),
+                ),
+              ),
+            ],
+          ),
+        ),
+        Expanded(
+          flex: 6,
+          child: Container(
+            decoration: const BoxDecoration(
+              color: Colors.white,
+              borderRadius: BorderRadius.horizontal(left: Radius.circular(30)),
+            ),
+            child: Column(
+              children: [
+                Padding(
+                  padding: const EdgeInsets.only(top: 20),
+                  child: Row(
                     mainAxisAlignment: MainAxisAlignment.spaceEvenly,
                     children: [
                       _buildTab('About'),
@@ -101,75 +260,18 @@ class _DetailScreenState extends State<DetailScreen> {
                       _buildTab('Moves'),
                     ],
                   ),
-                  Expanded(
-                    child: SingleChildScrollView(
-                      padding: const EdgeInsets.all(20),
-                      child: _buildSelectedContent(),
-                    ),
-                  ),
-                ],
-              ),
-            ),
-          ),
-
-          Stack(
-            children: [
-              Positioned(
-                top: MediaQuery.of(context).size.height * 0.12,
-                left: -30,
-                child: Opacity(
-                  opacity: 0.08,
-                  child: Container(
-                    width: 150,
-                    height: 150,
-                    decoration: BoxDecoration(
-                      color: Colors.white,
-                      shape: BoxShape.circle,
-                    ),
+                ),
+                Expanded(
+                  child: SingleChildScrollView(
+                    padding: const EdgeInsets.all(20),
+                    child: _buildSelectedContent(),
                   ),
                 ),
-              ),
-
-              Positioned(
-                top: MediaQuery.of(context).size.height * 0.12,
-                right: -30,
-                child: Stack(
-                  children: [
-                    Opacity(
-                      opacity: 0.08,
-                      child: Container(
-                        width: 150,
-                        height: 150,
-                        decoration: const BoxDecoration(
-                          color: Colors.white,
-                          shape: BoxShape.circle,
-                        ),
-                        child: CustomPaint(
-                          painter: PokeBallPatternPainter(),
-                        ),
-                      ),
-                    ),
-                  ],
-                ),
-              ),
-            ],
-          ),
-
-          Positioned(
-            top: MediaQuery.of(context).size.height * 0.12,
-            left: 0,
-            right: 0,
-            child: Hero(
-              tag: 'pokemon-${widget.pokemon.id}',
-              child: Image.network(
-                widget.pokemon.imageUrl,
-                height: 200,
-                fit: BoxFit.contain,
-              ),
+              ],
             ),
           ),
-        ],
-      ),
+        ),
+      ],
     );
   }
 
@@ -487,6 +589,7 @@ class _DetailScreenState extends State<DetailScreen> {
     return Container();
   }
 }
+
 class PokeBallPatternPainter extends CustomPainter {
   @override
   void paint(Canvas canvas, Size size) {
